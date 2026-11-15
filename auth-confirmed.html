@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Email confirmation · Kaos</title>
+    <style>
+      :root {
+        color-scheme: dark light;
+        font-family: system-ui, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: #161a21;
+        color: #eef2f8;
+      }
+      main {
+        width: min(100%, 460px);
+        padding: 32px;
+        border: 1px solid #394252;
+        border-radius: 24px;
+        background: #212733;
+      }
+      .brand {
+        margin: 0 0 28px;
+        font-size: 18px;
+        font-weight: 750;
+        letter-spacing: 0.14em;
+        color: #a6c8ff;
+      }
+      h1 {
+        font-size: 28px;
+        line-height: 1.2;
+        margin: 0 0 16px;
+      }
+      p {
+        line-height: 1.6;
+      }
+      .hint {
+        color: #b9c3d4;
+        font-size: 14px;
+      }
+      a {
+        display: inline-block;
+        margin-top: 16px;
+        padding: 13px 20px;
+        border-radius: 12px;
+        background: #a6c8ff;
+        color: #142944;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      a:focus-visible {
+        outline: 3px solid #fff;
+        outline-offset: 4px;
+      }
+      @media (prefers-color-scheme: light) {
+        body {
+          background: #f2f5fa;
+          color: #202936;
+        }
+        main {
+          background: #fff;
+          border-color: #d5dfed;
+        }
+        .brand {
+          color: #2761a6;
+        }
+        .hint {
+          color: #536176;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="brand">KAOS</p>
+      <h1 id="heading">Confirm your email</h1>
+      <p id="message">
+        Open the confirmation link in your Kaos email, then return to Kaos to sign in.
+      </p>
+      <p class="hint" id="hint">
+        On Android, return to the Kaos app. You can also sign in using the web app below.
+      </p>
+      <a href="./">Open Kaos web app</a>
+      <noscript
+        ><p>
+          After opening a valid confirmation link, return to Kaos and sign in with your email and
+          password.
+        </p></noscript
+      >
+    </main>
+    <script>
+      function showConfirmation() {
+        // Supabase has already verified the email before redirecting here. This page
+        // does not create an app session: sign-in also works in another browser or APK.
+        const fragment = new URLSearchParams(location.hash.slice(1));
+        const query = new URLSearchParams(location.search);
+        const error =
+          fragment.get('error') ||
+          fragment.get('error_code') ||
+          query.get('error') ||
+          query.get('error_code');
+        const type = fragment.get('type');
+        const confirmed =
+          !!fragment.get('access_token') &&
+          !!fragment.get('refresh_token') &&
+          (type === 'signup' || type === 'email');
+        // Remove credentials before any link is followed; never persist or transmit them.
+        history.replaceState(null, '', location.pathname);
+        if (error) {
+          document.getElementById('heading').textContent = 'Link expired or invalid';
+          document.getElementById('message').textContent =
+            'This link could not confirm your email. If you already confirmed it, return to Kaos and sign in. Otherwise, create your account again to request a fresh confirmation email.';
+        } else if (confirmed) {
+          document.getElementById('heading').textContent = 'Email confirmed';
+          document.getElementById('message').textContent =
+            'Your email is verified. Return to Kaos and sign in with your email and password to finish setting up your account.';
+        } else {
+          document.getElementById('heading').textContent = 'Confirm your email';
+          document.getElementById('message').textContent =
+            'Open the confirmation link in your Kaos email, then return to Kaos to sign in.';
+        }
+      }
+      window.addEventListener('hashchange', showConfirmation);
+      showConfirmation();
+    </script>
+  </body>
+</html>

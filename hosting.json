@@ -1,4 +1,8 @@
 {
-  "version": 1,
-  "syncServerUrl": ""
+  "version": 2,
+  "syncServerUrl": "https://lmmtgtucdzkmfemuyjuw.supabase.co/functions/v1/kaos",
+  "supabase": {
+    "url": "https://lmmtgtucdzkmfemuyjuw.supabase.co",
+    "publishableKey": "sb_publishable_OGx-K9UOJFkPAOi2YTL-vA_uD_AHl6q"
+  }
 }
